@@ -177,7 +177,7 @@ fun LockScreen(
 }
 
 @Composable
-private fun LockBadge(size: Dp, glow: Dp) {
+internal fun LockBadge(size: Dp, glow: Dp) {
     Box(contentAlignment = Alignment.Center) {
         Box(
             modifier = Modifier

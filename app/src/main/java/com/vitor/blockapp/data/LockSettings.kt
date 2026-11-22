@@ -15,6 +15,8 @@ data class LockSettings(
     val globalPin: String? = null,
     val globalPattern: String? = null,
     val perApp: Map<String, AppLockConfig> = emptyMap(),
+    /** Quanto tempo um app desbloqueado continua liberado depois que você sai dele. */
+    val graceSeconds: Int = 15,
 ) {
     /** Hash do segredo do método [method] para o app (próprio ou geral). */
     fun secretFor(packageName: String, method: LockMethod): String? {

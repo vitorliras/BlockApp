@@ -7,6 +7,7 @@ import com.vitor.blockapp.data.BlockedStore
 import com.vitor.blockapp.data.InstalledApp
 import com.vitor.blockapp.data.LockMethod
 import com.vitor.blockapp.data.SettingsStore
+import com.vitor.blockapp.data.homePackages
 import com.vitor.blockapp.data.loadLaunchableApps
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -41,6 +42,7 @@ class AppsViewModel(application: Application) : AndroidViewModel(application) {
     private val loading = MutableStateFlow(true)
     private val query = MutableStateFlow("")
     private val filter = MutableStateFlow(AppFilter.ALL)
+    private val homePackages: Set<String> = homePackages(application)
 
     private val base = combine(apps, store.blocked, settingsStore.settings) { all, blocked, settings ->
         Triple(all, blocked, settings)
@@ -89,6 +91,19 @@ class AppsViewModel(application: Application) : AndroidViewModel(application) {
 
     fun onQueryChange(value: String) {
         query.value = value
+    }
+
+    /**
+     * Apps que mudariam de estado num "bloquear todos" ([blocked] = true) ou "liberar todos".
+     * Vale para os apps que estão aparecendo na lista (respeita busca e filtro).
+     * A tela inicial do celular nunca entra, para evitar ciclo de bloqueio.
+     */
+    fun bulkTargets(blocked: Boolean): List<String> = state.value.items
+        .filter { it.blocked != blocked && it.app.packageName !in homePackages }
+        .map { it.app.packageName }
+
+    fun setBlockedMany(packageNames: List<String>, blocked: Boolean) {
+        viewModelScope.launch { store.setBlockedMany(packageNames, blocked) }
     }
 
     fun onFilterChange(value: AppFilter) {

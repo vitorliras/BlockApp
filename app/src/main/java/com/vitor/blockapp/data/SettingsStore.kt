@@ -2,6 +2,7 @@ package com.vitor.blockapp.data
 
 import android.content.Context
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -12,6 +13,7 @@ class SettingsStore(private val context: Context) {
     private val defaultMethodKey = stringPreferencesKey("default_method")
     private val globalPinKey = stringPreferencesKey("global_pin")
     private val globalPatternKey = stringPreferencesKey("global_pattern")
+    private val graceKey = intPreferencesKey("grace_seconds")
 
     private fun appKey(packageName: String) = stringPreferencesKey("cfg_$packageName")
 
@@ -25,7 +27,12 @@ class SettingsStore(private val context: Context) {
             globalPin = prefs[globalPinKey],
             globalPattern = prefs[globalPatternKey],
             perApp = perApp,
+            graceSeconds = prefs[graceKey] ?: 15,
         )
+    }
+
+    suspend fun setGraceSeconds(seconds: Int) {
+        context.dataStore.edit { it[graceKey] = seconds }
     }
 
     suspend fun setDefaultMethod(method: LockMethod) {

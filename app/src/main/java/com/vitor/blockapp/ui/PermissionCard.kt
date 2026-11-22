@@ -31,8 +31,10 @@ import androidx.compose.ui.unit.dp
 fun PermissionCard(
     accessibilityOn: Boolean,
     overlayOn: Boolean,
+    adminOn: Boolean,
     onOpenAccessibility: () -> Unit,
     onOpenOverlay: () -> Unit,
+    onOpenAdmin: () -> Unit,
     onOpenAppDetails: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -81,6 +83,15 @@ fun PermissionCard(
                 done = overlayOn,
                 action = "Abrir",
                 onClick = onOpenOverlay,
+            )
+            Spacer(Modifier.height(10.dp))
+            Step(
+                number = "3",
+                title = "Proteção contra desinstalação",
+                detail = "Ative como administrador do dispositivo.",
+                done = adminOn,
+                action = "Ativar",
+                onClick = onOpenAdmin,
             )
 
             if (!accessibilityOn) {

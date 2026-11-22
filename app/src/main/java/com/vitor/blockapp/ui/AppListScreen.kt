@@ -25,7 +25,15 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Search
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.material.icons.filled.LockOpen
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.TextButton
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -70,9 +78,16 @@ fun AppListScreen(
     // Reconfere as permissões toda vez que o usuário volta para o BlockApp.
     var accessibilityOn by remember { mutableStateOf(Permissions.isAccessibilityEnabled(context)) }
     var overlayOn by remember { mutableStateOf(Permissions.canDrawOverlays(context)) }
+    var adminOn by remember { mutableStateOf(Permissions.isAdminActive(context)) }
+    val adminLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        adminOn = Permissions.isAdminActive(context)
+    }
+    // null = sem diálogo; true = confirmar "bloquear todos"; false = confirmar "liberar todos".
+    var pendingBulk by remember { mutableStateOf<Boolean?>(null) }
     LifecycleResumeEffect(Unit) {
         accessibilityOn = Permissions.isAccessibilityEnabled(context)
         overlayOn = Permissions.canDrawOverlays(context)
+        adminOn = Permissions.isAdminActive(context)
         onPauseOrDispose { }
     }
 
@@ -88,9 +103,37 @@ fun AppListScreen(
             FilterRow(
                 selected = state.filter,
                 onSelect = viewModel::onFilterChange,
+                onBlockAll = { if (viewModel.bulkTargets(true).isNotEmpty()) pendingBulk = true },
+                onReleaseAll = { if (viewModel.bulkTargets(false).isNotEmpty()) pendingBulk = false },
                 modifier = Modifier.padding(horizontal = 20.dp),
             )
             Spacer(Modifier.height(12.dp))
+
+            pendingBulk?.let { block ->
+                val targets = viewModel.bulkTargets(block)
+                AlertDialog(
+                    onDismissRequest = { pendingBulk = null },
+                    title = { Text(if (block) "Bloquear todos?" else "Liberar todos?") },
+                    text = {
+                        Text(
+                            (if (block) "Bloquear " else "Liberar ") +
+                                (if (targets.size == 1) "1 app" else "${targets.size} apps") +
+                                " da lista atual" +
+                                (if (state.query.isNotBlank() || state.filter != AppFilter.ALL) " (respeita a busca e o filtro)" else "") +
+                                "?"
+                        )
+                    },
+                    confirmButton = {
+                        TextButton(onClick = {
+                            viewModel.setBlockedMany(targets, block)
+                            pendingBulk = null
+                        }) { Text(if (block) "Bloquear" else "Liberar") }
+                    },
+                    dismissButton = {
+                        TextButton(onClick = { pendingBulk = null }) { Text("Cancelar") }
+                    },
+                )
+            }
 
             when {
                 state.loading -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -112,13 +155,15 @@ fun AppListScreen(
                     // Item invisível e fixo no topo: serve de âncora da rolagem. Sem ele, quando o
                     // primeiro app visível muda de lugar, a lista rola atrás dele.
                     item(key = "ancora-topo") { Spacer(Modifier.height(1.dp)) }
-                    if (!accessibilityOn || !overlayOn) {
+                    if (!accessibilityOn || !overlayOn || !adminOn) {
                         item(key = "permissoes") {
                             PermissionCard(
                                 accessibilityOn = accessibilityOn,
                                 overlayOn = overlayOn,
+                                adminOn = adminOn,
                                 onOpenAccessibility = { context.startActivity(Permissions.accessibilitySettingsIntent()) },
                                 onOpenOverlay = { context.startActivity(Permissions.overlaySettingsIntent(context)) },
+                                onOpenAdmin = { adminLauncher.launch(Permissions.adminIntent(context)) },
                                 onOpenAppDetails = { context.startActivity(Permissions.appDetailsIntent(context)) },
                             )
                         }
@@ -214,8 +259,20 @@ private fun SearchField(value: String, onValueChange: (String) -> Unit, modifier
 }
 
 @Composable
-private fun FilterRow(selected: AppFilter, onSelect: (AppFilter) -> Unit, modifier: Modifier = Modifier) {
-    Row(modifier = modifier, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+private fun FilterRow(
+    selected: AppFilter,
+    onSelect: (AppFilter) -> Unit,
+    onBlockAll: () -> Unit,
+    onReleaseAll: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    var menuOpen by remember { mutableStateOf(false) }
+
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
         AppFilter.entries.forEach { option ->
             FilterChip(
                 selected = option == selected,
@@ -223,6 +280,34 @@ private fun FilterRow(selected: AppFilter, onSelect: (AppFilter) -> Unit, modifi
                 label = { Text(option.label) },
                 shape = RoundedCornerShape(14.dp),
             )
+        }
+        Spacer(Modifier.weight(1f))
+        Box {
+            IconButton(onClick = { menuOpen = true }) {
+                Icon(
+                    imageVector = Icons.Filled.MoreVert,
+                    contentDescription = "Ações em lote",
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+            DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {
+                DropdownMenuItem(
+                    text = { Text("Bloquear todos") },
+                    leadingIcon = { Icon(Icons.Filled.Lock, contentDescription = null) },
+                    onClick = {
+                        menuOpen = false
+                        onBlockAll()
+                    },
+                )
+                DropdownMenuItem(
+                    text = { Text("Liberar todos") },
+                    leadingIcon = { Icon(Icons.Filled.LockOpen, contentDescription = null) },
+                    onClick = {
+                        menuOpen = false
+                        onReleaseAll()
+                    },
+                )
+            }
         }
     }
 }

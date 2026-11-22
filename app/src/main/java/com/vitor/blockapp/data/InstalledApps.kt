@@ -12,6 +12,21 @@ data class InstalledApp(
     val icon: ImageBitmap,
 )
 
+/**
+ * A tela inicial (launcher) que está em uso no celular. Bloquear ela criaria um ciclo (o botão
+ * "voltar para o início" abriria o próprio app bloqueado), por isso nunca é bloqueada.
+ *
+ * Só vale o launcher padrão: no Samsung, o app Configurações também se declara como "home", e
+ * tratá-lo assim impediria de proteger ou bloquear as Configurações.
+ */
+fun homePackages(context: Context): Set<String> {
+    val intent = Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME)
+    val default = context.packageManager
+        .resolveActivity(intent, android.content.pm.PackageManager.MATCH_DEFAULT_ONLY)
+        ?.activityInfo?.packageName
+    return setOfNotNull(default)
+}
+
 /** Nome e ícone de um app pelo pacote, ou nulo se ele não existe mais. */
 fun loadAppBrief(context: Context, packageName: String): InstalledApp? = try {
     val pm = context.packageManager

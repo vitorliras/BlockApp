@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">BlockApp</string>
-    <string name="accessibility_description">Detecta quando um app bloqueado é aberto para mostrar a tela de bloqueio do BlockApp. Não lê o conteúdo da tela nem coleta dados.</string>
+    <string name="accessibility_description">Detecta quando um app bloqueado é aberto para mostrar a tela de bloqueio do BlockApp. Também lê o texto das telas de Configurações e do desinstalador apenas para impedir que o BlockApp seja desativado ou desinstalado sem senha. Nada é coletado nem enviado.</string>
 </resources>

@@ -7,11 +7,13 @@ import android.os.SystemClock
  *
  * Regras:
  * - Enquanto você está usando o app desbloqueado, ele fica liberado.
- * - Se você sair dele (início, outro app), há uma carência curta para voltar sem senha.
+ * - Se você sair dele (início, outro app), há uma carência (configurável) para voltar sem senha.
  * - Passada a carência, ou ao apagar a tela, pede a senha de novo.
  */
 object UnlockState {
-    private const val GRACE_MS = 15_000L
+    /** Carência em milissegundos. O serviço atualiza este valor conforme a configuração. */
+    @Volatile
+    var graceMs: Long = 15_000L
 
     private var unlockedPackage: String? = null
     private var leftAt: Long = 0L // 0 = ainda está dentro do app
@@ -27,7 +29,7 @@ object UnlockState {
     fun isUnlocked(packageName: String): Boolean {
         if (unlockedPackage != packageName) return false
         if (leftAt == 0L) return true
-        if (SystemClock.elapsedRealtime() - leftAt <= GRACE_MS) {
+        if (SystemClock.elapsedRealtime() - leftAt <= graceMs) {
             leftAt = 0L
             return true
         }

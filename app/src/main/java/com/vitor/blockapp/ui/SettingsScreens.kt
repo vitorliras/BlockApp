@@ -1,6 +1,10 @@
 package com.vitor.blockapp.ui
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -17,6 +21,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.Button
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -25,7 +31,12 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.lifecycle.compose.LifecycleResumeEffect
+import com.vitor.blockapp.Permissions
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -43,7 +54,18 @@ fun SecurityScreen(
     onBack: () -> Unit,
     onSelectDefault: (LockMethod) -> Unit,
     onSetup: (LockMethod) -> Unit,
+    onSelectGrace: (Int) -> Unit,
 ) {
+    val context = LocalContext.current
+    var adminOn by remember { mutableStateOf(Permissions.isAdminActive(context)) }
+    val adminLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        adminOn = Permissions.isAdminActive(context)
+    }
+    LifecycleResumeEffect(Unit) {
+        adminOn = Permissions.isAdminActive(context)
+        onPauseOrDispose { }
+    }
+
     ScreenFrame(title = "Segurança", onBack = onBack) {
         SectionTitle("Como desbloquear (padrão geral)")
         Text(
@@ -80,6 +102,56 @@ fun SecurityScreen(
             onClick = {
                 if (settings.globalPattern != null) onSelectDefault(LockMethod.PATTERN) else onSetup(LockMethod.PATTERN)
             },
+        )
+
+        Spacer(Modifier.height(28.dp))
+        SectionTitle("Tempo de carência")
+        Text(
+            text = "Depois de sair de um app desbloqueado, ele continua liberado por este tempo. " +
+                "Vale também para reabrir o BlockApp.",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        Spacer(Modifier.height(12.dp))
+        Row(
+            modifier = Modifier.horizontalScroll(rememberScrollState()),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            listOf(0 to "Imediato", 15 to "15 s", 30 to "30 s", 60 to "1 min", 300 to "5 min")
+                .forEach { (seconds, label) ->
+                    FilterChip(
+                        selected = settings.graceSeconds == seconds,
+                        onClick = { onSelectGrace(seconds) },
+                        label = { Text(label) },
+                        shape = RoundedCornerShape(14.dp),
+                    )
+                }
+        }
+
+        Spacer(Modifier.height(28.dp))
+        SectionTitle("Proteção contra desinstalação")
+        Text(
+            text = if (adminOn) {
+                "Ativa. Para desinstalar o BlockApp, é preciso desativar o administrador do dispositivo antes."
+            } else {
+                "Desativada. Ative para que o BlockApp não possa ser desinstalado direto."
+            },
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        if (!adminOn) {
+            Spacer(Modifier.height(10.dp))
+            Button(
+                onClick = { adminLauncher.launch(Permissions.adminIntent(context)) },
+                shape = RoundedCornerShape(14.dp),
+            ) { Text("Ativar proteção") }
+        }
+        Spacer(Modifier.height(12.dp))
+        Text(
+            text = "Dica: bloqueie também o app Configurações. Assim ninguém consegue desativar a " +
+                "proteção nem o serviço de acessibilidade do BlockApp sem a sua senha.",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     }
 }

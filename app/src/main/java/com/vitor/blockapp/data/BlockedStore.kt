@@ -12,6 +12,14 @@ class BlockedStore(private val context: Context) {
 
     val blocked: Flow<Set<String>> = context.dataStore.data.map { it[key] ?: emptySet() }
 
+    /** Bloqueia ou libera vários apps de uma vez. */
+    suspend fun setBlockedMany(packageNames: Collection<String>, blocked: Boolean) {
+        context.dataStore.edit { prefs ->
+            val current = prefs[key] ?: emptySet()
+            prefs[key] = if (blocked) current + packageNames else current - packageNames.toSet()
+        }
+    }
+
     suspend fun setBlocked(packageName: String, blocked: Boolean) {
         context.dataStore.edit { prefs ->
             val current = prefs[key] ?: emptySet()

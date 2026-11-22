@@ -19,6 +19,10 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
     val settings: StateFlow<LockSettings> =
         store.settings.stateIn(viewModelScope, SharingStarted.Eagerly, LockSettings())
 
+    fun setGraceSeconds(seconds: Int) {
+        viewModelScope.launch { store.setGraceSeconds(seconds) }
+    }
+
     fun setDefaultMethod(method: LockMethod) {
         viewModelScope.launch { store.setDefaultMethod(method) }
     }

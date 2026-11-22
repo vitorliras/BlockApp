@@ -4,11 +4,15 @@
     <!-- Garante que a tela de bloqueio possa abrir por cima de outro app -->
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
-    <!-- Permite enxergar os apps que têm ícone no menu (sem pedir acesso a todos os apps) -->
+    <!-- Permite enxergar os apps que têm ícone no menu e qual é a tela inicial do celular -->
     <queries>
         <intent>
             <action android:name="android.intent.action.MAIN" />
             <category android:name="android.intent.category.LAUNCHER" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.HOME" />
         </intent>
     </queries>
 
@@ -23,6 +27,7 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
+            android:configChanges="orientation|screenSize|keyboardHidden|screenLayout|smallestScreenSize|uiMode|density"
             android:theme="@style/Theme.BlockApp">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -52,6 +57,19 @@
                 android:name="android.accessibilityservice"
                 android:resource="@xml/accessibility_service_config" />
         </service>
+
+        <!-- Administrador do dispositivo: protege contra desinstalação -->
+        <receiver
+            android:name=".BlockAdminReceiver"
+            android:exported="true"
+            android:permission="android.permission.BIND_DEVICE_ADMIN">
+            <meta-data
+                android:name="android.app.device_admin"
+                android:resource="@xml/device_admin" />
+            <intent-filter>
+                <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
