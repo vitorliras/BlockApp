@@ -45,6 +45,12 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.material3.FilterChip
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.compose.LifecycleResumeEffect
+import com.vitor.blockapp.Permissions
 import com.vitor.blockapp.AppFilter
 import com.vitor.blockapp.AppItem
 import com.vitor.blockapp.AppsViewModel
@@ -52,6 +58,16 @@ import com.vitor.blockapp.AppsViewModel
 @Composable
 fun AppListScreen(viewModel: AppsViewModel = viewModel()) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+
+    // Reconfere as permissões toda vez que o usuário volta para o BlockApp.
+    var accessibilityOn by remember { mutableStateOf(Permissions.isAccessibilityEnabled(context)) }
+    var overlayOn by remember { mutableStateOf(Permissions.canDrawOverlays(context)) }
+    LifecycleResumeEffect(Unit) {
+        accessibilityOn = Permissions.isAccessibilityEnabled(context)
+        overlayOn = Permissions.canDrawOverlays(context)
+        onPauseOrDispose { }
+    }
 
     Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
         Column(modifier = Modifier.statusBarsPadding()) {
@@ -88,6 +104,17 @@ fun AppListScreen(viewModel: AppsViewModel = viewModel()) {
                     // Item invisível e fixo no topo: serve de âncora da rolagem. Sem ele, quando o
                     // primeiro app visível muda de lugar, a lista rola atrás dele.
                     item(key = "ancora-topo") { Spacer(Modifier.height(1.dp)) }
+                    if (!accessibilityOn || !overlayOn) {
+                        item(key = "permissoes") {
+                            PermissionCard(
+                                accessibilityOn = accessibilityOn,
+                                overlayOn = overlayOn,
+                                onOpenAccessibility = { context.startActivity(Permissions.accessibilitySettingsIntent()) },
+                                onOpenOverlay = { context.startActivity(Permissions.overlaySettingsIntent(context)) },
+                                onOpenAppDetails = { context.startActivity(Permissions.appDetailsIntent(context)) },
+                            )
+                        }
+                    }
                     items(state.items, key = { it.app.packageName }) { item ->
                         AppRow(
                             item = item,
