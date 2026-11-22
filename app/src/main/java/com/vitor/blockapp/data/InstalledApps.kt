@@ -12,6 +12,19 @@ data class InstalledApp(
     val icon: ImageBitmap,
 )
 
+/** Nome e ícone de um app pelo pacote, ou nulo se ele não existe mais. */
+fun loadAppBrief(context: Context, packageName: String): InstalledApp? = try {
+    val pm = context.packageManager
+    val info = pm.getApplicationInfo(packageName, 0)
+    InstalledApp(
+        packageName = packageName,
+        label = pm.getApplicationLabel(info).toString(),
+        icon = pm.getApplicationIcon(info).toBitmap(160, 160).asImageBitmap(),
+    )
+} catch (e: android.content.pm.PackageManager.NameNotFoundException) {
+    null
+}
+
 /** Lê os apps que aparecem no menu do celular (exceto o próprio BlockApp). */
 fun loadLaunchableApps(context: Context): List<InstalledApp> {
     val pm = context.packageManager

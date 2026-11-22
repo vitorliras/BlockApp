@@ -5,6 +5,8 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.vitor.blockapp.data.BlockedStore
 import com.vitor.blockapp.data.InstalledApp
+import com.vitor.blockapp.data.LockMethod
+import com.vitor.blockapp.data.SettingsStore
 import com.vitor.blockapp.data.loadLaunchableApps
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,7 +16,8 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-data class AppItem(val app: InstalledApp, val blocked: Boolean)
+/** [tag] aparece ao lado de "Bloqueado" quando o app tem configuração própria de senha. */
+data class AppItem(val app: InstalledApp, val blocked: Boolean, val tag: String? = null)
 
 enum class AppFilter(val label: String) {
     ALL("Todos"),
@@ -33,15 +36,31 @@ data class AppsUiState(
 
 class AppsViewModel(application: Application) : AndroidViewModel(application) {
     private val store = BlockedStore(application)
+    private val settingsStore = SettingsStore(application)
     private val apps = MutableStateFlow<List<InstalledApp>>(emptyList())
     private val loading = MutableStateFlow(true)
     private val query = MutableStateFlow("")
     private val filter = MutableStateFlow(AppFilter.ALL)
 
-    val state: StateFlow<AppsUiState> = combine(apps, store.blocked, query, filter, loading) { all, blocked, q, f, isLoading ->
+    private val base = combine(apps, store.blocked, settingsStore.settings) { all, blocked, settings ->
+        Triple(all, blocked, settings)
+    }
+
+    val state: StateFlow<AppsUiState> = combine(base, query, filter, loading) { (all, blocked, settings), q, f, isLoading ->
         val items = all
             .filter { it.label.contains(q.trim(), ignoreCase = true) }
-            .map { AppItem(it, it.packageName in blocked) }
+            .map {
+                AppItem(
+                    app = it,
+                    blocked = it.packageName in blocked,
+                    tag = when (settings.perApp[it.packageName]?.method) {
+                        null -> null
+                        LockMethod.PHONE -> "senha do celular"
+                        LockMethod.PIN -> "PIN próprio"
+                        LockMethod.PATTERN -> "padrão próprio"
+                    },
+                )
+            }
             .filter {
                 when (f) {
                     AppFilter.ALL -> true

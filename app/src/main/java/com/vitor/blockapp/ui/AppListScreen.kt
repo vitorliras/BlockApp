@@ -25,6 +25,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -56,7 +58,12 @@ import com.vitor.blockapp.AppItem
 import com.vitor.blockapp.AppsViewModel
 
 @Composable
-fun AppListScreen(viewModel: AppsViewModel = viewModel()) {
+fun AppListScreen(
+    listState: LazyListState,
+    onOpenSecurity: () -> Unit,
+    onOpenApp: (String) -> Unit,
+    viewModel: AppsViewModel = viewModel(),
+) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
@@ -71,7 +78,7 @@ fun AppListScreen(viewModel: AppsViewModel = viewModel()) {
 
     Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
         Column(modifier = Modifier.statusBarsPadding()) {
-            Header(blocked = state.blockedCount, total = state.totalCount)
+            Header(blocked = state.blockedCount, total = state.totalCount, onOpenSecurity = onOpenSecurity)
             SearchField(
                 value = state.query,
                 onValueChange = viewModel::onQueryChange,
@@ -97,6 +104,7 @@ fun AppListScreen(viewModel: AppsViewModel = viewModel()) {
                     )
                 }
                 else -> LazyColumn(
+                    state = listState,
                     modifier = Modifier.navigationBarsPadding(),
                     contentPadding = PaddingValues(start = 20.dp, end = 20.dp, bottom = 24.dp),
                     verticalArrangement = Arrangement.spacedBy(10.dp),
@@ -119,6 +127,7 @@ fun AppListScreen(viewModel: AppsViewModel = viewModel()) {
                         AppRow(
                             item = item,
                             onToggle = { viewModel.setBlocked(item.app.packageName, it) },
+                            onClick = { onOpenApp(item.app.packageName) },
                             modifier = Modifier.animateItem(),
                         )
                     }
@@ -129,7 +138,7 @@ fun AppListScreen(viewModel: AppsViewModel = viewModel()) {
 }
 
 @Composable
-private fun Header(blocked: Int, total: Int) {
+private fun Header(blocked: Int, total: Int, onOpenSecurity: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -151,7 +160,7 @@ private fun Header(blocked: Int, total: Int) {
             )
         }
         Spacer(Modifier.width(16.dp))
-        Column {
+        Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = "Seus apps",
                 style = MaterialTheme.typography.headlineMedium,
@@ -166,6 +175,13 @@ private fun Header(blocked: Int, total: Int) {
                 },
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+        IconButton(onClick = onOpenSecurity) {
+            Icon(
+                imageVector = Icons.Filled.Settings,
+                contentDescription = "Segurança",
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
     }
@@ -212,7 +228,12 @@ private fun FilterRow(selected: AppFilter, onSelect: (AppFilter) -> Unit, modifi
 }
 
 @Composable
-private fun AppRow(item: AppItem, onToggle: (Boolean) -> Unit, modifier: Modifier = Modifier) {
+private fun AppRow(
+    item: AppItem,
+    onToggle: (Boolean) -> Unit,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     val container by animateColorAsState(
         targetValue = if (item.blocked) MaterialTheme.colorScheme.primaryContainer
         else MaterialTheme.colorScheme.surfaceContainer,
@@ -220,6 +241,7 @@ private fun AppRow(item: AppItem, onToggle: (Boolean) -> Unit, modifier: Modifie
     )
 
     Surface(
+        onClick = onClick,
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(20.dp),
         color = container,
@@ -256,7 +278,11 @@ private fun AppRow(item: AppItem, onToggle: (Boolean) -> Unit, modifier: Modifie
                         Spacer(Modifier.width(4.dp))
                     }
                     Text(
-                        text = if (item.blocked) "Bloqueado" else "Liberado",
+                        text = if (item.blocked) {
+                            "Bloqueado" + (item.tag?.let { " · $it" } ?: "")
+                        } else {
+                            "Liberado"
+                        },
                         style = MaterialTheme.typography.bodySmall,
                         color = if (item.blocked) MaterialTheme.colorScheme.primary
                         else MaterialTheme.colorScheme.onSurfaceVariant,
