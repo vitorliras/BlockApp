@@ -10,5 +10,5 @@ import android.content.Intent
  */
 class BlockAdminReceiver : DeviceAdminReceiver() {
     override fun onDisableRequested(context: Context, intent: Intent): CharSequence =
-        "Ao desativar, o BlockApp poderá ser desinstalado e seus apps ficarão desprotegidos."
+        context.getString(R.string.admin_disable_warning)
 }

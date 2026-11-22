@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="accessibility_description">Detecta cuándo se abre una aplicación bloqueada para mostrar la pantalla de bloqueo de BlockApp. También lee el texto de las pantallas de Ajustes y del desinstalador solo para evitar que BlockApp se desactive o se desinstale sin contraseña. No se recopila ni se envía nada.</string>
+
+    <!-- Lista de apps -->
+    <string name="list_title">Tus apps</string>
+    <string name="summary_none">Ninguna app bloqueada · %1$d apps</string>
+    <string name="summary_one">1 app bloqueada · %1$d apps</string>
+    <string name="summary_many">%1$d apps bloqueadas · %2$d apps</string>
+    <string name="cd_security">Seguridad</string>
+    <string name="search_hint">Buscar app</string>
+    <string name="cd_clear_search">Borrar búsqueda</string>
+    <string name="filter_all">Todas</string>
+    <string name="filter_blocked">Bloqueadas</string>
+    <string name="filter_free">Liberadas</string>
+    <string name="cd_bulk_actions">Acciones en lote</string>
+    <string name="block_all">Bloquear todas</string>
+    <string name="release_all">Liberar todas</string>
+    <string name="dialog_block_title">¿Bloquear todas?</string>
+    <string name="dialog_release_title">¿Liberar todas?</string>
+    <plurals name="bulk_block_body">
+        <item quantity="one">¿Bloquear %d app de la lista actual?</item>
+        <item quantity="many">¿Bloquear %d de apps de la lista actual?</item>
+        <item quantity="other">¿Bloquear %d apps de la lista actual?</item>
+    </plurals>
+    <plurals name="bulk_release_body">
+        <item quantity="one">¿Liberar %d app de la lista actual?</item>
+        <item quantity="many">¿Liberar %d de apps de la lista actual?</item>
+        <item quantity="other">¿Liberar %d apps de la lista actual?</item>
+    </plurals>
+    <string name="bulk_filter_note">Se respetan la búsqueda y el filtro actuales.</string>
+    <string name="confirm_block">Bloquear</string>
+    <string name="confirm_release">Liberar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="no_apps_found">No se encontraron apps</string>
+    <string name="status_blocked">Bloqueada</string>
+    <string name="status_blocked_tag">Bloqueada · %1$s</string>
+    <string name="status_free">Liberada</string>
+    <string name="tag_phone">contraseña del teléfono</string>
+    <string name="tag_pin">PIN propio</string>
+    <string name="tag_pattern">patrón propio</string>
+
+    <!-- Cartão de permissões -->
+    <string name="perm_title">Activa la protección</string>
+    <string name="perm_subtitle">Sin estos permisos BlockApp no puede bloquear nada.</string>
+    <string name="perm_a11y_title">Accesibilidad</string>
+    <string name="perm_a11y_detail">Busca BlockApp y activa el servicio.</string>
+    <string name="perm_overlay_title">Mostrar sobre otras apps</string>
+    <string name="perm_overlay_detail">Permítelo para BlockApp.</string>
+    <string name="perm_admin_title">Protección contra desinstalación</string>
+    <string name="perm_admin_detail">Actívalo como administrador del dispositivo.</string>
+    <string name="action_open">Abrir</string>
+    <string name="action_activate">Activar</string>
+    <string name="perm_restricted_help">¿La opción de Accesibilidad aparece en gris o muestra un aviso de seguridad? Abre la información de la app, toca los tres puntos (⋮) y elige \"Permitir ajustes restringidos\".</string>
+    <string name="perm_open_app_info">Abrir información de la app</string>
+    <string name="status_enabled">Activado</string>
+
+    <!-- Tela de bloqueio -->
+    <string name="lock_title">App bloqueada</string>
+    <string name="lock_protected">Esta app está protegida por BlockApp.</string>
+    <string name="action_unlock">Desbloquear</string>
+    <string name="lock_wait">Demasiados intentos. Espera %1$ds.</string>
+    <string name="pin_wrong">PIN incorrecto</string>
+    <string name="pattern_wrong">Patrón incorrecto</string>
+    <string name="enter_pin">Introduce tu PIN</string>
+    <string name="draw_pattern">Dibuja tu patrón</string>
+    <string name="go_home">Volver al inicio</string>
+
+    <!-- Entrada do BlockApp -->
+    <string name="gate_title">BlockApp protegido</string>
+    <string name="gate_subtitle">Usa la huella o la contraseña del teléfono para abrir.</string>
+
+    <!-- Teclado e padrão -->
+    <string name="cd_delete">Borrar</string>
+    <string name="cd_confirm">Confirmar</string>
+
+    <!-- Segurança -->
+    <string name="security_title">Seguridad</string>
+    <string name="section_default">Cómo desbloquear (predeterminado)</string>
+    <string name="section_default_desc">Vale para todas las apps bloqueadas, excepto las que tengan su propia configuración.</string>
+    <string name="method_phone_title">Contraseña del teléfono</string>
+    <string name="method_phone_desc">Huella, rostro, PIN o patrón de Android</string>
+    <string name="pin_blockapp">PIN de BlockApp</string>
+    <string name="pin_defined">PIN definido</string>
+    <string name="not_created">Aún no creado</string>
+    <string name="action_change">Cambiar</string>
+    <string name="action_create">Crear</string>
+    <string name="pattern_blockapp">Patrón de BlockApp</string>
+    <string name="pattern_defined">Patrón definido</string>
+    <string name="grace_title">Tiempo de gracia</string>
+    <string name="grace_desc">Después de salir de una app desbloqueada, sigue liberada durante este tiempo. También vale para volver a abrir BlockApp.</string>
+    <string name="grace_now">Inmediato</string>
+    <string name="grace_seconds">%1$d s</string>
+    <string name="grace_minutes">%1$d min</string>
+    <string name="uninstall_title">Protección contra desinstalación</string>
+    <string name="uninstall_on">Activa. Para desinstalar BlockApp hay que desactivar antes el administrador del dispositivo.</string>
+    <string name="uninstall_off">Desactivada. Actívala para que BlockApp no pueda desinstalarse directamente.</string>
+    <string name="action_activate_protection">Activar protección</string>
+    <string name="uninstall_tip">Consejo: bloquea también la app Ajustes. Así nadie podrá desactivar la protección ni el servicio de accesibilidad de BlockApp sin tu contraseña.</string>
+    <string name="section_app">Cómo desbloquear esta app</string>
+    <string name="use_general">Usar el predeterminado</string>
+    <string name="use_general_now">Ahora: %1$s</string>
+    <string name="method_name_phone">contraseña del teléfono</string>
+    <string name="method_name_pin">PIN de BlockApp</string>
+    <string name="method_name_pattern">patrón de BlockApp</string>
+    <string name="own_pin">PIN propio</string>
+    <string name="own_pin_defined">PIN definido solo para esta app</string>
+    <string name="own_pattern">Patrón propio</string>
+    <string name="own_pattern_defined">Patrón definido solo para esta app</string>
+    <string name="cd_back">Atrás</string>
+
+    <!-- Criar PIN / padrão -->
+    <string name="setup_mismatch">No coinciden. Empecemos de nuevo.</string>
+    <string name="setup_pin_hint">Elige de 4 a 8 dígitos</string>
+    <string name="setup_pattern_hint">Dibuja un patrón uniendo al menos 4 puntos</string>
+    <string name="setup_pin_confirm">Introduce el PIN otra vez para confirmar</string>
+    <string name="setup_pattern_confirm">Dibuja el mismo patrón para confirmar</string>
+    <string name="setup_create_pin">Crea un PIN</string>
+    <string name="setup_create_pattern">Crea un patrón</string>
+    <string name="setup_confirm">Confirma</string>
+    <string name="setup_min_points">Une al menos 4 puntos.</string>
+
+    <!-- Pedido de digital/senha do Android -->
+    <string name="bio_unlock_title">Desbloquear %1$s</string>
+    <string name="bio_subtitle">Usa la huella o la contraseña del teléfono</string>
+    <string name="bio_open_title">Abrir BlockApp</string>
+
+    <!-- Administrador do dispositivo -->
+    <string name="admin_explanation">Impide que BlockApp se desinstale sin desactivar antes esta protección.</string>
+    <string name="admin_disable_warning">Si lo desactivas, BlockApp podrá desinstalarse y tus apps quedarán desprotegidas.</string>
+</resources>

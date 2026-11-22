@@ -36,7 +36,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.compose.LifecycleResumeEffect
+import androidx.compose.ui.res.stringResource
 import com.vitor.blockapp.Permissions
+import com.vitor.blockapp.R
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -66,10 +68,10 @@ fun SecurityScreen(
         onPauseOrDispose { }
     }
 
-    ScreenFrame(title = "Segurança", onBack = onBack) {
-        SectionTitle("Como desbloquear (padrão geral)")
+    ScreenFrame(title = stringResource(R.string.security_title), onBack = onBack) {
+        SectionTitle(stringResource(R.string.section_default))
         Text(
-            text = "Vale para todos os apps bloqueados, exceto os que tiverem uma configuração própria.",
+            text = stringResource(R.string.section_default_desc),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -77,16 +79,16 @@ fun SecurityScreen(
 
         OptionCard(
             selected = settings.defaultMethod == LockMethod.PHONE,
-            title = "Senha do celular",
-            subtitle = "Digital, rosto, PIN ou padrão do Android",
+            title = stringResource(R.string.method_phone_title),
+            subtitle = stringResource(R.string.method_phone_desc),
             onClick = { onSelectDefault(LockMethod.PHONE) },
         )
         Spacer(Modifier.height(10.dp))
         OptionCard(
             selected = settings.defaultMethod == LockMethod.PIN,
-            title = "PIN do BlockApp",
-            subtitle = if (settings.globalPin != null) "PIN definido" else "Ainda não criado",
-            actionLabel = if (settings.globalPin != null) "Alterar" else "Criar",
+            title = stringResource(R.string.pin_blockapp),
+            subtitle = stringResource(if (settings.globalPin != null) R.string.pin_defined else R.string.not_created),
+            actionLabel = stringResource(if (settings.globalPin != null) R.string.action_change else R.string.action_create),
             onAction = { onSetup(LockMethod.PIN) },
             onClick = {
                 if (settings.globalPin != null) onSelectDefault(LockMethod.PIN) else onSetup(LockMethod.PIN)
@@ -95,9 +97,9 @@ fun SecurityScreen(
         Spacer(Modifier.height(10.dp))
         OptionCard(
             selected = settings.defaultMethod == LockMethod.PATTERN,
-            title = "Padrão do BlockApp",
-            subtitle = if (settings.globalPattern != null) "Padrão definido" else "Ainda não criado",
-            actionLabel = if (settings.globalPattern != null) "Alterar" else "Criar",
+            title = stringResource(R.string.pattern_blockapp),
+            subtitle = stringResource(if (settings.globalPattern != null) R.string.pattern_defined else R.string.not_created),
+            actionLabel = stringResource(if (settings.globalPattern != null) R.string.action_change else R.string.action_create),
             onAction = { onSetup(LockMethod.PATTERN) },
             onClick = {
                 if (settings.globalPattern != null) onSelectDefault(LockMethod.PATTERN) else onSetup(LockMethod.PATTERN)
@@ -105,10 +107,9 @@ fun SecurityScreen(
         )
 
         Spacer(Modifier.height(28.dp))
-        SectionTitle("Tempo de carência")
+        SectionTitle(stringResource(R.string.grace_title))
         Text(
-            text = "Depois de sair de um app desbloqueado, ele continua liberado por este tempo. " +
-                "Vale também para reabrir o BlockApp.",
+            text = stringResource(R.string.grace_desc),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -117,25 +118,28 @@ fun SecurityScreen(
             modifier = Modifier.horizontalScroll(rememberScrollState()),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            listOf(0 to "Imediato", 15 to "15 s", 30 to "30 s", 60 to "1 min", 300 to "5 min")
-                .forEach { (seconds, label) ->
-                    FilterChip(
-                        selected = settings.graceSeconds == seconds,
-                        onClick = { onSelectGrace(seconds) },
-                        label = { Text(label) },
-                        shape = RoundedCornerShape(14.dp),
-                    )
-                }
+            listOf(0, 15, 30, 60, 300).forEach { seconds ->
+                FilterChip(
+                    selected = settings.graceSeconds == seconds,
+                    onClick = { onSelectGrace(seconds) },
+                    label = {
+                        Text(
+                            when {
+                                seconds == 0 -> stringResource(R.string.grace_now)
+                                seconds < 60 -> stringResource(R.string.grace_seconds, seconds)
+                                else -> stringResource(R.string.grace_minutes, seconds / 60)
+                            }
+                        )
+                    },
+                    shape = RoundedCornerShape(14.dp),
+                )
+            }
         }
 
         Spacer(Modifier.height(28.dp))
-        SectionTitle("Proteção contra desinstalação")
+        SectionTitle(stringResource(R.string.uninstall_title))
         Text(
-            text = if (adminOn) {
-                "Ativa. Para desinstalar o BlockApp, é preciso desativar o administrador do dispositivo antes."
-            } else {
-                "Desativada. Ative para que o BlockApp não possa ser desinstalado direto."
-            },
+            text = stringResource(if (adminOn) R.string.uninstall_on else R.string.uninstall_off),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -144,12 +148,11 @@ fun SecurityScreen(
             Button(
                 onClick = { adminLauncher.launch(Permissions.adminIntent(context)) },
                 shape = RoundedCornerShape(14.dp),
-            ) { Text("Ativar proteção") }
+            ) { Text(stringResource(R.string.action_activate_protection)) }
         }
         Spacer(Modifier.height(12.dp))
         Text(
-            text = "Dica: bloqueie também o app Configurações. Assim ninguém consegue desativar a " +
-                "proteção nem o serviço de acessibilidade do BlockApp sem a sua senha.",
+            text = stringResource(R.string.uninstall_tip),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -171,32 +174,37 @@ fun AppConfigScreen(
     val selected = cfg?.method
 
     ScreenFrame(title = brief?.label ?: packageName, onBack = onBack, icon = brief?.icon) {
-        SectionTitle("Como desbloquear este app")
+        SectionTitle(stringResource(R.string.section_app))
         Spacer(Modifier.height(12.dp))
 
         OptionCard(
             selected = selected == null,
-            title = "Usar o padrão geral",
-            subtitle = "Agora: " + when (settings.defaultMethod) {
-                LockMethod.PHONE -> "senha do celular"
-                LockMethod.PIN -> "PIN do BlockApp"
-                LockMethod.PATTERN -> "padrão do BlockApp"
-            },
+            title = stringResource(R.string.use_general),
+            subtitle = stringResource(
+                R.string.use_general_now,
+                stringResource(
+                    when (settings.defaultMethod) {
+                        LockMethod.PHONE -> R.string.method_name_phone
+                        LockMethod.PIN -> R.string.method_name_pin
+                        LockMethod.PATTERN -> R.string.method_name_pattern
+                    }
+                ),
+            ),
             onClick = { onSelectMethod(null) },
         )
         Spacer(Modifier.height(10.dp))
         OptionCard(
             selected = selected == LockMethod.PHONE,
-            title = "Senha do celular",
-            subtitle = "Digital, rosto, PIN ou padrão do Android",
+            title = stringResource(R.string.method_phone_title),
+            subtitle = stringResource(R.string.method_phone_desc),
             onClick = { onSelectMethod(LockMethod.PHONE) },
         )
         Spacer(Modifier.height(10.dp))
         OptionCard(
             selected = selected == LockMethod.PIN,
-            title = "PIN próprio",
-            subtitle = if (cfg?.pin != null) "PIN definido só para este app" else "Ainda não criado",
-            actionLabel = if (cfg?.pin != null) "Alterar" else "Criar",
+            title = stringResource(R.string.own_pin),
+            subtitle = stringResource(if (cfg?.pin != null) R.string.own_pin_defined else R.string.not_created),
+            actionLabel = stringResource(if (cfg?.pin != null) R.string.action_change else R.string.action_create),
             onAction = { onSetup(LockMethod.PIN) },
             onClick = {
                 if (cfg?.pin != null) onSelectMethod(LockMethod.PIN) else onSetup(LockMethod.PIN)
@@ -205,9 +213,9 @@ fun AppConfigScreen(
         Spacer(Modifier.height(10.dp))
         OptionCard(
             selected = selected == LockMethod.PATTERN,
-            title = "Padrão próprio",
-            subtitle = if (cfg?.pattern != null) "Padrão definido só para este app" else "Ainda não criado",
-            actionLabel = if (cfg?.pattern != null) "Alterar" else "Criar",
+            title = stringResource(R.string.own_pattern),
+            subtitle = stringResource(if (cfg?.pattern != null) R.string.own_pattern_defined else R.string.not_created),
+            actionLabel = stringResource(if (cfg?.pattern != null) R.string.action_change else R.string.action_create),
             onAction = { onSetup(LockMethod.PATTERN) },
             onClick = {
                 if (cfg?.pattern != null) onSelectMethod(LockMethod.PATTERN) else onSetup(LockMethod.PATTERN)
@@ -239,7 +247,7 @@ private fun ScreenFrame(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 IconButton(onClick = onBack) {
-                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Voltar")
+                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.cd_back))
                 }
                 if (icon != null) {
                     Image(

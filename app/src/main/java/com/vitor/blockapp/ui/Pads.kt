@@ -32,9 +32,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.vitor.blockapp.R
 
-/** Teclado numÃ©rico com bolinhas. Quando o usuÃ¡rio confirma, chama [onSubmit] com os dÃ­gitos. */
+/** Teclado numérico com bolinhas. Quando o usuário confirma, chama [onSubmit] com os dígitos. */
 @Composable
 fun PinInput(
     modifier: Modifier = Modifier,
@@ -77,14 +79,14 @@ fun PinInput(
                             pin = pin.dropLast(1)
                             onInputStarted()
                         }) {
-                            Icon(Icons.AutoMirrored.Filled.Backspace, contentDescription = "Apagar")
+                            Icon(Icons.AutoMirrored.Filled.Backspace, contentDescription = stringResource(R.string.cd_delete))
                         }
                         ">" -> PadKey(enabled = enabled && pin.length >= minLength, filled = true, onClick = {
                             val value = pin
                             pin = ""
                             onSubmit(value)
                         }) {
-                            Icon(Icons.Filled.Check, contentDescription = "Confirmar")
+                            Icon(Icons.Filled.Check, contentDescription = stringResource(R.string.cd_confirm))
                         }
                         else -> PadKey(enabled = enabled, filled = false, onClick = {
                             if (pin.length < maxLength) {
@@ -123,8 +125,8 @@ private fun PadKey(
 }
 
 /**
- * Grade 3x3 para desenhar o padrÃ£o. Devolve a lista de pontos (0 a 8) na ordem do desenho.
- * Os pontos sÃ£o numerados da esquerda para a direita, de cima para baixo.
+ * Grade 3x3 para desenhar o padrão. Devolve a lista de pontos (0 a 8) na ordem do desenho.
+ * Os pontos são numerados da esquerda para a direita, de cima para baixo.
  */
 @Composable
 fun PatternPad(

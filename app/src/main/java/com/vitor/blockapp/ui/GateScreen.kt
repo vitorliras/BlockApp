@@ -21,7 +21,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import com.vitor.blockapp.R
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 
@@ -41,14 +43,14 @@ fun GateScreen(onUnlock: () -> Unit) {
             LockBadge(size = 112.dp, glow = 220.dp)
             Spacer(Modifier.height(24.dp))
             Text(
-                text = "BlockApp protegido",
+                text = stringResource(R.string.gate_title),
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onBackground,
             )
             Spacer(Modifier.height(8.dp))
             Text(
-                text = "Use a digital ou a senha do celular para abrir.",
+                text = stringResource(R.string.gate_subtitle),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,
@@ -63,7 +65,7 @@ fun GateScreen(onUnlock: () -> Unit) {
             ) {
                 Icon(Icons.Filled.Fingerprint, contentDescription = null, modifier = Modifier.size(22.dp))
                 Spacer(Modifier.width(10.dp))
-                Text("Desbloquear", style = MaterialTheme.typography.titleMedium)
+                Text(stringResource(R.string.action_unlock), style = MaterialTheme.typography.titleMedium)
             }
         }
     }

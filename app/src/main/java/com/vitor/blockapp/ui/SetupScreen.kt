@@ -23,12 +23,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.vitor.blockapp.R
 import com.vitor.blockapp.data.LockMethod
 
-/** Fluxo de criar PIN ou padrÃ£o: digita uma vez e repete para confirmar. */
+/** Fluxo de criar PIN ou padrão: digita uma vez e repete para confirmar. */
 @Composable
 fun SetupScreen(
     kind: LockMethod,
@@ -37,30 +39,33 @@ fun SetupScreen(
     onCancel: () -> Unit,
 ) {
     var first by remember { mutableStateOf<String?>(null) }
-    var error by remember { mutableStateOf<String?>(null) }
+    var errorRes by remember { mutableStateOf<Int?>(null) }
 
     fun handle(secret: String) {
         val previous = first
         when {
             previous == null -> {
                 first = secret
-                error = null
+                errorRes = null
             }
             previous == secret -> onDone(secret)
             else -> {
                 first = null
-                error = "NÃ£o conferem. Vamos comeÃ§ar de novo."
+                errorRes = R.string.setup_mismatch
             }
         }
     }
 
     val isPin = kind == LockMethod.PIN
-    val message = error ?: when {
-        first == null && isPin -> "Escolha de 4 a 8 dÃ­gitos"
-        first == null -> "Desenhe o padrÃ£o ligando pelo menos 4 pontos"
-        isPin -> "Digite o PIN de novo para confirmar"
-        else -> "Desenhe o mesmo padrÃ£o para confirmar"
-    }
+    val hasError = errorRes != null
+    val message = stringResource(
+        errorRes ?: when {
+            first == null && isPin -> R.string.setup_pin_hint
+            first == null -> R.string.setup_pattern_hint
+            isPin -> R.string.setup_pin_confirm
+            else -> R.string.setup_pattern_confirm
+        }
+    )
 
     Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
         Column(
@@ -77,7 +82,10 @@ fun SetupScreen(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 IconButton(onClick = onCancel) {
-                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Voltar")
+                    Icon(
+                        Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = stringResource(R.string.cd_back),
+                    )
                 }
                 Text(
                     text = title,
@@ -89,11 +97,13 @@ fun SetupScreen(
 
             Spacer(Modifier.weight(1f))
             Text(
-                text = if (first == null) {
-                    if (isPin) "Crie um PIN" else "Crie um padrÃ£o"
-                } else {
-                    "Confirme"
-                },
+                text = stringResource(
+                    when {
+                        first != null -> R.string.setup_confirm
+                        isPin -> R.string.setup_create_pin
+                        else -> R.string.setup_create_pattern
+                    }
+                ),
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onBackground,
@@ -102,7 +112,7 @@ fun SetupScreen(
             Text(
                 text = message,
                 style = MaterialTheme.typography.bodyMedium,
-                color = if (error != null) MaterialTheme.colorScheme.error
+                color = if (hasError) MaterialTheme.colorScheme.error
                 else MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(horizontal = 32.dp),
@@ -111,18 +121,18 @@ fun SetupScreen(
 
             if (isPin) {
                 PinInput(
-                    error = error != null,
-                    onInputStarted = { error = null },
+                    error = hasError,
+                    onInputStarted = { errorRes = null },
                     onSubmit = ::handle,
                 )
             } else {
                 PatternPad(
                     modifier = Modifier.padding(horizontal = 48.dp),
-                    error = error != null,
-                    onInputStarted = { error = null },
+                    error = hasError,
+                    onInputStarted = { errorRes = null },
                     onComplete = { path ->
                         if (path.size < 4) {
-                            error = "Ligue pelo menos 4 pontos."
+                            errorRes = R.string.setup_min_points
                         } else {
                             handle(path.joinToString(""))
                         }

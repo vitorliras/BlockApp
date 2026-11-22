@@ -60,7 +60,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.LifecycleResumeEffect
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import com.vitor.blockapp.Permissions
+import com.vitor.blockapp.R
 import com.vitor.blockapp.AppFilter
 import com.vitor.blockapp.AppItem
 import com.vitor.blockapp.AppsViewModel
@@ -113,24 +116,36 @@ fun AppListScreen(
                 val targets = viewModel.bulkTargets(block)
                 AlertDialog(
                     onDismissRequest = { pendingBulk = null },
-                    title = { Text(if (block) "Bloquear todos?" else "Liberar todos?") },
+                    title = {
+                        Text(stringResource(if (block) R.string.dialog_block_title else R.string.dialog_release_title))
+                    },
                     text = {
-                        Text(
-                            (if (block) "Bloquear " else "Liberar ") +
-                                (if (targets.size == 1) "1 app" else "${targets.size} apps") +
-                                " da lista atual" +
-                                (if (state.query.isNotBlank() || state.filter != AppFilter.ALL) " (respeita a busca e o filtro)" else "") +
-                                "?"
-                        )
+                        Column {
+                            Text(
+                                pluralStringResource(
+                                    if (block) R.plurals.bulk_block_body else R.plurals.bulk_release_body,
+                                    targets.size,
+                                    targets.size,
+                                )
+                            )
+                            if (state.query.isNotBlank() || state.filter != AppFilter.ALL) {
+                                Spacer(Modifier.height(8.dp))
+                                Text(
+                                    text = stringResource(R.string.bulk_filter_note),
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                            }
+                        }
                     },
                     confirmButton = {
                         TextButton(onClick = {
                             viewModel.setBlockedMany(targets, block)
                             pendingBulk = null
-                        }) { Text(if (block) "Bloquear" else "Liberar") }
+                        }) { Text(stringResource(if (block) R.string.confirm_block else R.string.confirm_release)) }
                     },
                     dismissButton = {
-                        TextButton(onClick = { pendingBulk = null }) { Text("Cancelar") }
+                        TextButton(onClick = { pendingBulk = null }) { Text(stringResource(R.string.cancel)) }
                     },
                 )
             }
@@ -141,7 +156,7 @@ fun AppListScreen(
                 }
                 state.items.isEmpty() -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     Text(
-                        text = "Nenhum app encontrado",
+                        text = stringResource(R.string.no_apps_found),
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         style = MaterialTheme.typography.bodyLarge,
                     )
@@ -207,16 +222,16 @@ private fun Header(blocked: Int, total: Int, onOpenSecurity: () -> Unit) {
         Spacer(Modifier.width(16.dp))
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = "Seus apps",
+                text = stringResource(R.string.list_title),
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onBackground,
             )
             Text(
                 text = when (blocked) {
-                    0 -> "Nenhum app bloqueado · $total apps"
-                    1 -> "1 app bloqueado · $total apps"
-                    else -> "$blocked apps bloqueados · $total apps"
+                    0 -> stringResource(R.string.summary_none, total)
+                    1 -> stringResource(R.string.summary_one, total)
+                    else -> stringResource(R.string.summary_many, blocked, total)
                 },
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -225,7 +240,7 @@ private fun Header(blocked: Int, total: Int, onOpenSecurity: () -> Unit) {
         IconButton(onClick = onOpenSecurity) {
             Icon(
                 imageVector = Icons.Filled.Settings,
-                contentDescription = "Segurança",
+                contentDescription = stringResource(R.string.cd_security),
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
@@ -239,12 +254,12 @@ private fun SearchField(value: String, onValueChange: (String) -> Unit, modifier
         onValueChange = onValueChange,
         modifier = modifier.fillMaxWidth(),
         singleLine = true,
-        placeholder = { Text("Buscar app") },
+        placeholder = { Text(stringResource(R.string.search_hint)) },
         leadingIcon = { Icon(Icons.Filled.Search, contentDescription = null) },
         trailingIcon = {
             if (value.isNotEmpty()) {
                 IconButton(onClick = { onValueChange("") }) {
-                    Icon(Icons.Filled.Clear, contentDescription = "Limpar busca")
+                    Icon(Icons.Filled.Clear, contentDescription = stringResource(R.string.cd_clear_search))
                 }
             }
         },
@@ -277,7 +292,7 @@ private fun FilterRow(
             FilterChip(
                 selected = option == selected,
                 onClick = { onSelect(option) },
-                label = { Text(option.label) },
+                label = { Text(stringResource(option.labelRes)) },
                 shape = RoundedCornerShape(14.dp),
             )
         }
@@ -286,13 +301,13 @@ private fun FilterRow(
             IconButton(onClick = { menuOpen = true }) {
                 Icon(
                     imageVector = Icons.Filled.MoreVert,
-                    contentDescription = "Ações em lote",
+                    contentDescription = stringResource(R.string.cd_bulk_actions),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
             DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {
                 DropdownMenuItem(
-                    text = { Text("Bloquear todos") },
+                    text = { Text(stringResource(R.string.block_all)) },
                     leadingIcon = { Icon(Icons.Filled.Lock, contentDescription = null) },
                     onClick = {
                         menuOpen = false
@@ -300,7 +315,7 @@ private fun FilterRow(
                     },
                 )
                 DropdownMenuItem(
-                    text = { Text("Liberar todos") },
+                    text = { Text(stringResource(R.string.release_all)) },
                     leadingIcon = { Icon(Icons.Filled.LockOpen, contentDescription = null) },
                     onClick = {
                         menuOpen = false
@@ -363,10 +378,11 @@ private fun AppRow(
                         Spacer(Modifier.width(4.dp))
                     }
                     Text(
-                        text = if (item.blocked) {
-                            "Bloqueado" + (item.tag?.let { " · $it" } ?: "")
-                        } else {
-                            "Liberado"
+                        text = when {
+                            !item.blocked -> stringResource(R.string.status_free)
+                            item.tagRes != null ->
+                                stringResource(R.string.status_blocked_tag, stringResource(item.tagRes))
+                            else -> stringResource(R.string.status_blocked)
                         },
                         style = MaterialTheme.typography.bodySmall,
                         color = if (item.blocked) MaterialTheme.colorScheme.primary

@@ -36,7 +36,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import com.vitor.blockapp.R
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -74,7 +76,7 @@ fun LockScreen(
             LockBadge(size = if (compact) 84.dp else 112.dp, glow = if (compact) 160.dp else 220.dp)
             Spacer(Modifier.height(if (compact) 14.dp else 24.dp))
             Text(
-                text = "App bloqueado",
+                text = stringResource(R.string.lock_title),
                 style = if (compact) MaterialTheme.typography.titleLarge else MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onBackground,
@@ -112,7 +114,7 @@ fun LockScreen(
                 LockMode.Phone -> {
                     Spacer(Modifier.weight(1f))
                     Text(
-                        text = "Este app está protegido pelo BlockApp.",
+                        text = stringResource(R.string.lock_protected),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         textAlign = TextAlign.Center,
@@ -127,7 +129,7 @@ fun LockScreen(
                     ) {
                         Icon(Icons.Filled.Fingerprint, contentDescription = null, modifier = Modifier.size(22.dp))
                         Spacer(Modifier.width(10.dp))
-                        Text("Desbloquear", style = MaterialTheme.typography.titleMedium)
+                        Text(stringResource(R.string.action_unlock), style = MaterialTheme.typography.titleMedium)
                     }
                 }
                 is LockMode.Secret -> {
@@ -136,11 +138,11 @@ fun LockScreen(
                     Spacer(Modifier.height(18.dp))
                     Text(
                         text = when {
-                            !enabled -> "Muitas tentativas. Aguarde ${lockedSeconds}s."
-                            wrong && isPin -> "PIN incorreto"
-                            wrong -> "Padrão incorreto"
-                            isPin -> "Digite seu PIN"
-                            else -> "Desenhe seu padrão"
+                            !enabled -> stringResource(R.string.lock_wait, lockedSeconds)
+                            wrong && isPin -> stringResource(R.string.pin_wrong)
+                            wrong -> stringResource(R.string.pattern_wrong)
+                            isPin -> stringResource(R.string.enter_pin)
+                            else -> stringResource(R.string.draw_pattern)
                         },
                         style = MaterialTheme.typography.bodyLarge,
                         color = if (wrong || !enabled) MaterialTheme.colorScheme.error
@@ -170,7 +172,7 @@ fun LockScreen(
 
             Spacer(Modifier.height(4.dp))
             TextButton(onClick = onGoHome) {
-                Text("Voltar para o início")
+                Text(stringResource(R.string.go_home))
             }
         }
     }

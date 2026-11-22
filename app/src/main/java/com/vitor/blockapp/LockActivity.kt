@@ -151,8 +151,8 @@ class LockActivity : FragmentActivity() {
         )
 
         val info = BiometricPrompt.PromptInfo.Builder()
-            .setTitle("Desbloquear ${appLabel()}")
-            .setSubtitle("Use a digital ou a senha do celular")
+            .setTitle(getString(R.string.bio_unlock_title, appLabel()))
+            .setSubtitle(getString(R.string.bio_subtitle))
             .setAllowedAuthenticators(BIOMETRIC_WEAK or DEVICE_CREDENTIAL)
             .build()
 

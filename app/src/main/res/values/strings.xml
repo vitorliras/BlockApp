@@ -1,5 +1,131 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Idioma padrão (inglês). Português: values-pt. Espanhol: values-es. -->
 <resources>
-    <string name="app_name">BlockApp</string>
-    <string name="accessibility_description">Detecta quando um app bloqueado é aberto para mostrar a tela de bloqueio do BlockApp. Também lê o texto das telas de Configurações e do desinstalador apenas para impedir que o BlockApp seja desativado ou desinstalado sem senha. Nada é coletado nem enviado.</string>
+    <string name="app_name" translatable="false">BlockApp</string>
+    <string name="accessibility_description">Detects when a blocked app is opened so BlockApp can show its lock screen. It also reads the text of the Settings and uninstaller screens only to prevent BlockApp from being turned off or uninstalled without a password. Nothing is collected or sent.</string>
+
+    <!-- Lista de apps -->
+    <string name="list_title">Your apps</string>
+    <string name="summary_none">No apps blocked · %1$d apps</string>
+    <string name="summary_one">1 app blocked · %1$d apps</string>
+    <string name="summary_many">%1$d apps blocked · %2$d apps</string>
+    <string name="cd_security">Security</string>
+    <string name="search_hint">Search apps</string>
+    <string name="cd_clear_search">Clear search</string>
+    <string name="filter_all">All</string>
+    <string name="filter_blocked">Blocked</string>
+    <string name="filter_free">Unblocked</string>
+    <string name="cd_bulk_actions">Bulk actions</string>
+    <string name="block_all">Block all</string>
+    <string name="release_all">Unblock all</string>
+    <string name="dialog_block_title">Block all?</string>
+    <string name="dialog_release_title">Unblock all?</string>
+    <plurals name="bulk_block_body">
+        <item quantity="one">Block %d app from the current list?</item>
+        <item quantity="other">Block %d apps from the current list?</item>
+    </plurals>
+    <plurals name="bulk_release_body">
+        <item quantity="one">Unblock %d app from the current list?</item>
+        <item quantity="other">Unblock %d apps from the current list?</item>
+    </plurals>
+    <string name="bulk_filter_note">The current search and filter are respected.</string>
+    <string name="confirm_block">Block</string>
+    <string name="confirm_release">Unblock</string>
+    <string name="cancel">Cancel</string>
+    <string name="no_apps_found">No apps found</string>
+    <string name="status_blocked">Blocked</string>
+    <string name="status_blocked_tag">Blocked · %1$s</string>
+    <string name="status_free">Unblocked</string>
+    <string name="tag_phone">phone password</string>
+    <string name="tag_pin">own PIN</string>
+    <string name="tag_pattern">own pattern</string>
+
+    <!-- Cartão de permissões -->
+    <string name="perm_title">Turn on protection</string>
+    <string name="perm_subtitle">Without these permissions BlockApp cannot block anything.</string>
+    <string name="perm_a11y_title">Accessibility</string>
+    <string name="perm_a11y_detail">Find BlockApp and turn the service on.</string>
+    <string name="perm_overlay_title">Display over other apps</string>
+    <string name="perm_overlay_detail">Allow it for BlockApp.</string>
+    <string name="perm_admin_title">Uninstall protection</string>
+    <string name="perm_admin_detail">Turn on as a device administrator.</string>
+    <string name="action_open">Open</string>
+    <string name="action_activate">Turn on</string>
+    <string name="perm_restricted_help">Is the Accessibility option grayed out or showing a security warning? Open the app info, tap the three dots (⋮) and choose \"Allow restricted settings\".</string>
+    <string name="perm_open_app_info">Open app info</string>
+    <string name="status_enabled">Enabled</string>
+
+    <!-- Tela de bloqueio -->
+    <string name="lock_title">App blocked</string>
+    <string name="lock_protected">This app is protected by BlockApp.</string>
+    <string name="action_unlock">Unlock</string>
+    <string name="lock_wait">Too many attempts. Wait %1$ds.</string>
+    <string name="pin_wrong">Wrong PIN</string>
+    <string name="pattern_wrong">Wrong pattern</string>
+    <string name="enter_pin">Enter your PIN</string>
+    <string name="draw_pattern">Draw your pattern</string>
+    <string name="go_home">Back to home</string>
+
+    <!-- Entrada do BlockApp -->
+    <string name="gate_title">BlockApp protected</string>
+    <string name="gate_subtitle">Use your fingerprint or phone password to open.</string>
+
+    <!-- Teclado e padrão -->
+    <string name="cd_delete">Delete</string>
+    <string name="cd_confirm">Confirm</string>
+
+    <!-- Segurança -->
+    <string name="security_title">Security</string>
+    <string name="section_default">How to unlock (default)</string>
+    <string name="section_default_desc">Applies to all blocked apps, except those with their own setting.</string>
+    <string name="method_phone_title">Phone password</string>
+    <string name="method_phone_desc">Fingerprint, face, PIN or pattern of Android</string>
+    <string name="pin_blockapp">BlockApp PIN</string>
+    <string name="pin_defined">PIN set</string>
+    <string name="not_created">Not created yet</string>
+    <string name="action_change">Change</string>
+    <string name="action_create">Create</string>
+    <string name="pattern_blockapp">BlockApp pattern</string>
+    <string name="pattern_defined">Pattern set</string>
+    <string name="grace_title">Grace period</string>
+    <string name="grace_desc">After you leave an unlocked app, it stays unlocked for this long. It also applies to reopening BlockApp.</string>
+    <string name="grace_now">Immediately</string>
+    <string name="grace_seconds">%1$d s</string>
+    <string name="grace_minutes">%1$d min</string>
+    <string name="uninstall_title">Uninstall protection</string>
+    <string name="uninstall_on">On. To uninstall BlockApp you must first turn off the device administrator.</string>
+    <string name="uninstall_off">Off. Turn it on so BlockApp cannot be uninstalled directly.</string>
+    <string name="action_activate_protection">Turn on protection</string>
+    <string name="uninstall_tip">Tip: also block the Settings app. That way nobody can turn off the protection or the BlockApp accessibility service without your password.</string>
+    <string name="section_app">How to unlock this app</string>
+    <string name="use_general">Use the default</string>
+    <string name="use_general_now">Now: %1$s</string>
+    <string name="method_name_phone">phone password</string>
+    <string name="method_name_pin">BlockApp PIN</string>
+    <string name="method_name_pattern">BlockApp pattern</string>
+    <string name="own_pin">Own PIN</string>
+    <string name="own_pin_defined">PIN set only for this app</string>
+    <string name="own_pattern">Own pattern</string>
+    <string name="own_pattern_defined">Pattern set only for this app</string>
+    <string name="cd_back">Back</string>
+
+    <!-- Criar PIN / padrão -->
+    <string name="setup_mismatch">They do not match. Let us start over.</string>
+    <string name="setup_pin_hint">Choose 4 to 8 digits</string>
+    <string name="setup_pattern_hint">Draw a pattern connecting at least 4 dots</string>
+    <string name="setup_pin_confirm">Enter the PIN again to confirm</string>
+    <string name="setup_pattern_confirm">Draw the same pattern to confirm</string>
+    <string name="setup_create_pin">Create a PIN</string>
+    <string name="setup_create_pattern">Create a pattern</string>
+    <string name="setup_confirm">Confirm</string>
+    <string name="setup_min_points">Connect at least 4 dots.</string>
+
+    <!-- Pedido de digital/senha do Android -->
+    <string name="bio_unlock_title">Unlock %1$s</string>
+    <string name="bio_subtitle">Use your fingerprint or phone password</string>
+    <string name="bio_open_title">Open BlockApp</string>
+
+    <!-- Administrador do dispositivo -->
+    <string name="admin_explanation">Prevents BlockApp from being uninstalled without turning this protection off first.</string>
+    <string name="admin_disable_warning">If you turn this off, BlockApp can be uninstalled and your apps will be unprotected.</string>
 </resources>

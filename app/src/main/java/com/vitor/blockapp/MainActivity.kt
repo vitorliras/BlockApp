@@ -15,6 +15,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.res.stringResource
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -106,8 +107,8 @@ class MainActivity : FragmentActivity() {
         )
         prompt.authenticate(
             BiometricPrompt.PromptInfo.Builder()
-                .setTitle("Abrir o BlockApp")
-                .setSubtitle("Use a digital ou a senha do celular")
+                .setTitle(getString(R.string.bio_open_title))
+                .setSubtitle(getString(R.string.bio_subtitle))
                 .setAllowedAuthenticators(BIOMETRIC_WEAK or DEVICE_CREDENTIAL)
                 .build()
         )
@@ -155,7 +156,9 @@ private fun AppContent(settingsViewModel: SettingsViewModel) {
 
         is Screen.Setup -> SetupScreen(
             kind = screen.kind,
-            title = if (screen.kind == LockMethod.PIN) "PIN do BlockApp" else "Padrão do BlockApp",
+            title = stringResource(
+                if (screen.kind == LockMethod.PIN) R.string.pin_blockapp else R.string.pattern_blockapp
+            ),
             onCancel = ::pop,
             onDone = { secret ->
                 if (screen.packageName == null) {

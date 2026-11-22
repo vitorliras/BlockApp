@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="accessibility_description">Detecta quando um app bloqueado é aberto para mostrar a tela de bloqueio do BlockApp. Também lê o texto das telas de Configurações e do desinstalador apenas para impedir que o BlockApp seja desativado ou desinstalado sem senha. Nada é coletado nem enviado.</string>
+
+    <!-- Lista de apps -->
+    <string name="list_title">Seus apps</string>
+    <string name="summary_none">Nenhum app bloqueado · %1$d apps</string>
+    <string name="summary_one">1 app bloqueado · %1$d apps</string>
+    <string name="summary_many">%1$d apps bloqueados · %2$d apps</string>
+    <string name="cd_security">Segurança</string>
+    <string name="search_hint">Buscar app</string>
+    <string name="cd_clear_search">Limpar busca</string>
+    <string name="filter_all">Todos</string>
+    <string name="filter_blocked">Bloqueados</string>
+    <string name="filter_free">Liberados</string>
+    <string name="cd_bulk_actions">Ações em lote</string>
+    <string name="block_all">Bloquear todos</string>
+    <string name="release_all">Liberar todos</string>
+    <string name="dialog_block_title">Bloquear todos?</string>
+    <string name="dialog_release_title">Liberar todos?</string>
+    <plurals name="bulk_block_body">
+        <item quantity="one">Bloquear %d app da lista atual?</item>
+        <item quantity="many">Bloquear %d de apps da lista atual?</item>
+        <item quantity="other">Bloquear %d apps da lista atual?</item>
+    </plurals>
+    <plurals name="bulk_release_body">
+        <item quantity="one">Liberar %d app da lista atual?</item>
+        <item quantity="many">Liberar %d de apps da lista atual?</item>
+        <item quantity="other">Liberar %d apps da lista atual?</item>
+    </plurals>
+    <string name="bulk_filter_note">A busca e o filtro atuais são respeitados.</string>
+    <string name="confirm_block">Bloquear</string>
+    <string name="confirm_release">Liberar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="no_apps_found">Nenhum app encontrado</string>
+    <string name="status_blocked">Bloqueado</string>
+    <string name="status_blocked_tag">Bloqueado · %1$s</string>
+    <string name="status_free">Liberado</string>
+    <string name="tag_phone">senha do celular</string>
+    <string name="tag_pin">PIN próprio</string>
+    <string name="tag_pattern">padrão próprio</string>
+
+    <!-- Cartão de permissões -->
+    <string name="perm_title">Ative a proteção</string>
+    <string name="perm_subtitle">Sem estas permissões o BlockApp não consegue bloquear nada.</string>
+    <string name="perm_a11y_title">Acessibilidade</string>
+    <string name="perm_a11y_detail">Procure por BlockApp e ligue o serviço.</string>
+    <string name="perm_overlay_title">Exibir sobre outros apps</string>
+    <string name="perm_overlay_detail">Permita para o BlockApp.</string>
+    <string name="perm_admin_title">Proteção contra desinstalação</string>
+    <string name="perm_admin_detail">Ative como administrador do dispositivo.</string>
+    <string name="action_open">Abrir</string>
+    <string name="action_activate">Ativar</string>
+    <string name="perm_restricted_help">A opção de Acessibilidade está cinza ou pede aviso de segurança? Abra as informações do app, toque nos três pontinhos (⋮) e escolha \"Permitir configurações restritas\".</string>
+    <string name="perm_open_app_info">Abrir informações do app</string>
+    <string name="status_enabled">Ativado</string>
+
+    <!-- Tela de bloqueio -->
+    <string name="lock_title">App bloqueado</string>
+    <string name="lock_protected">Este app está protegido pelo BlockApp.</string>
+    <string name="action_unlock">Desbloquear</string>
+    <string name="lock_wait">Muitas tentativas. Aguarde %1$ds.</string>
+    <string name="pin_wrong">PIN incorreto</string>
+    <string name="pattern_wrong">Padrão incorreto</string>
+    <string name="enter_pin">Digite seu PIN</string>
+    <string name="draw_pattern">Desenhe seu padrão</string>
+    <string name="go_home">Voltar para o início</string>
+
+    <!-- Entrada do BlockApp -->
+    <string name="gate_title">BlockApp protegido</string>
+    <string name="gate_subtitle">Use a digital ou a senha do celular para abrir.</string>
+
+    <!-- Teclado e padrão -->
+    <string name="cd_delete">Apagar</string>
+    <string name="cd_confirm">Confirmar</string>
+
+    <!-- Segurança -->
+    <string name="security_title">Segurança</string>
+    <string name="section_default">Como desbloquear (padrão geral)</string>
+    <string name="section_default_desc">Vale para todos os apps bloqueados, exceto os que tiverem uma configuração própria.</string>
+    <string name="method_phone_title">Senha do celular</string>
+    <string name="method_phone_desc">Digital, rosto, PIN ou padrão do Android</string>
+    <string name="pin_blockapp">PIN do BlockApp</string>
+    <string name="pin_defined">PIN definido</string>
+    <string name="not_created">Ainda não criado</string>
+    <string name="action_change">Alterar</string>
+    <string name="action_create">Criar</string>
+    <string name="pattern_blockapp">Padrão do BlockApp</string>
+    <string name="pattern_defined">Padrão definido</string>
+    <string name="grace_title">Tempo de carência</string>
+    <string name="grace_desc">Depois de sair de um app desbloqueado, ele continua liberado por este tempo. Vale também para reabrir o BlockApp.</string>
+    <string name="grace_now">Imediato</string>
+    <string name="grace_seconds">%1$d s</string>
+    <string name="grace_minutes">%1$d min</string>
+    <string name="uninstall_title">Proteção contra desinstalação</string>
+    <string name="uninstall_on">Ativa. Para desinstalar o BlockApp, é preciso desativar o administrador do dispositivo antes.</string>
+    <string name="uninstall_off">Desativada. Ative para que o BlockApp não possa ser desinstalado direto.</string>
+    <string name="action_activate_protection">Ativar proteção</string>
+    <string name="uninstall_tip">Dica: bloqueie também o app Configurações. Assim ninguém consegue desativar a proteção nem o serviço de acessibilidade do BlockApp sem a sua senha.</string>
+    <string name="section_app">Como desbloquear este app</string>
+    <string name="use_general">Usar o padrão geral</string>
+    <string name="use_general_now">Agora: %1$s</string>
+    <string name="method_name_phone">senha do celular</string>
+    <string name="method_name_pin">PIN do BlockApp</string>
+    <string name="method_name_pattern">padrão do BlockApp</string>
+    <string name="own_pin">PIN próprio</string>
+    <string name="own_pin_defined">PIN definido só para este app</string>
+    <string name="own_pattern">Padrão próprio</string>
+    <string name="own_pattern_defined">Padrão definido só para este app</string>
+    <string name="cd_back">Voltar</string>
+
+    <!-- Criar PIN / padrão -->
+    <string name="setup_mismatch">Não conferem. Vamos começar de novo.</string>
+    <string name="setup_pin_hint">Escolha de 4 a 8 dígitos</string>
+    <string name="setup_pattern_hint">Desenhe o padrão ligando pelo menos 4 pontos</string>
+    <string name="setup_pin_confirm">Digite o PIN de novo para confirmar</string>
+    <string name="setup_pattern_confirm">Desenhe o mesmo padrão para confirmar</string>
+    <string name="setup_create_pin">Crie um PIN</string>
+    <string name="setup_create_pattern">Crie um padrão</string>
+    <string name="setup_confirm">Confirme</string>
+    <string name="setup_min_points">Ligue pelo menos 4 pontos.</string>
+
+    <!-- Pedido de digital/senha do Android -->
+    <string name="bio_unlock_title">Desbloquear %1$s</string>
+    <string name="bio_subtitle">Use a digital ou a senha do celular</string>
+    <string name="bio_open_title">Abrir o BlockApp</string>
+
+    <!-- Administrador do dispositivo -->
+    <string name="admin_explanation">Impede que o BlockApp seja desinstalado sem desativar esta proteção antes.</string>
+    <string name="admin_disable_warning">Ao desativar, o BlockApp poderá ser desinstalado e seus apps ficarão desprotegidos.</string>
+</resources>

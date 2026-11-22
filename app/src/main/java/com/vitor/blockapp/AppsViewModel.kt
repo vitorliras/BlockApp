@@ -1,6 +1,7 @@
 package com.vitor.blockapp
 
 import android.app.Application
+import androidx.annotation.StringRes
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.vitor.blockapp.data.BlockedStore
@@ -17,13 +18,13 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-/** [tag] aparece ao lado de "Bloqueado" quando o app tem configuração própria de senha. */
-data class AppItem(val app: InstalledApp, val blocked: Boolean, val tag: String? = null)
+/** [tagRes] é o texto (traduzido) que aparece ao lado de "Bloqueado" quando o app tem senha própria. */
+data class AppItem(val app: InstalledApp, val blocked: Boolean, @StringRes val tagRes: Int? = null)
 
-enum class AppFilter(val label: String) {
-    ALL("Todos"),
-    BLOCKED("Bloqueados"),
-    FREE("Liberados"),
+enum class AppFilter(@StringRes val labelRes: Int) {
+    ALL(R.string.filter_all),
+    BLOCKED(R.string.filter_blocked),
+    FREE(R.string.filter_free),
 }
 
 data class AppsUiState(
@@ -55,11 +56,11 @@ class AppsViewModel(application: Application) : AndroidViewModel(application) {
                 AppItem(
                     app = it,
                     blocked = it.packageName in blocked,
-                    tag = when (settings.perApp[it.packageName]?.method) {
+                    tagRes = when (settings.perApp[it.packageName]?.method) {
                         null -> null
-                        LockMethod.PHONE -> "senha do celular"
-                        LockMethod.PIN -> "PIN próprio"
-                        LockMethod.PATTERN -> "padrão próprio"
+                        LockMethod.PHONE -> R.string.tag_phone
+                        LockMethod.PIN -> R.string.tag_pin
+                        LockMethod.PATTERN -> R.string.tag_pattern
                     },
                 )
             }

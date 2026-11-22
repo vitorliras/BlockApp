@@ -79,7 +79,18 @@ class BlockerService : AccessibilityService() {
         if (pkg in GUARDED_SYSTEM_PACKAGES) {
             handler.removeCallbacksAndMessages(null)
             if (UnlockState.isUnlocked(pkg)) return
-            // O conteúdo da tela demora um instante para carregar: confere duas vezes.
+
+            // Sinal 1, independente de idioma: o nome técnico da tela de administradores do
+            // dispositivo é o mesmo em qualquer língua (ex.: "...DeviceAdminSettingsActivity").
+            val screenName = event.className?.toString().orEmpty()
+            Log.d(TAG, "guard($pkg): tela=$screenName")
+            if (pkg == SETTINGS_PACKAGE && screenName.contains(ADMIN_SCREEN_MARKER, ignoreCase = true)) {
+                openLock(pkg)
+                return
+            }
+
+            // Sinal 2: o nome "BlockApp" aparece na tela. O conteúdo demora um instante para
+            // carregar, então confere duas vezes.
             for (delay in CHECK_DELAYS_MS) {
                 handler.postDelayed({ checkGuardedScreen(pkg) }, delay)
             }
@@ -99,7 +110,11 @@ class BlockerService : AccessibilityService() {
         openLock(pkg)
     }
 
-    /** Lê o texto da janela atual e, se mostrar o BlockApp com uma ação perigosa, pede a senha. */
+    /**
+     * Procura o nome "BlockApp" no texto da janela atual (o nome do app não é traduzido, então
+     * isto funciona em qualquer idioma). Pede a senha no desinstalador e em páginas curtas de
+     * detalhe de Configurações; a lista longa de apps não entra, para não pedir senha à toa.
+     */
     private fun checkGuardedScreen(pkg: String) {
         val root = rootInActiveWindow
         if (root == null) {
@@ -117,21 +132,11 @@ class BlockerService : AccessibilityService() {
         val screen = texts.toString().lowercase()
 
         val mentionsBlockApp = screen.contains("blockapp")
-        val dangerous = DANGEROUS_KEYWORDS.any { screen.contains(it) }
+        val isInstaller = pkg != SETTINGS_PACKAGE
+        val shouldLock = mentionsBlockApp && (isInstaller || screen.length < DETAIL_PAGE_MAX_LETTERS)
 
-        // 1) Tela de administradores do dispositivo: protegida sempre, mesmo que o texto dela
-        //    não traga o nome do BlockApp (acontece em alguns caminhos, como o link da notificação).
-        val adminPage = pkg == SETTINGS_PACKAGE && ADMIN_PAGE_PHRASES.any { screen.contains(it) }
-        // 2) Tela que cita o BlockApp com ação perigosa, ou página curta de detalhe dele
-        //    (a lista longa de apps não entra, para não pedir senha à toa).
-        val blockAppPage = mentionsBlockApp && (dangerous || screen.length < DETAIL_PAGE_MAX_LETTERS)
-
-        Log.d(
-            TAG,
-            "guard($pkg): ${screen.length} letras, blockapp=$mentionsBlockApp, perigosa=$dangerous, " +
-                "admin=$adminPage, trava=${adminPage || blockAppPage}",
-        )
-        if (adminPage || blockAppPage) openLock(pkg)
+        Log.d(TAG, "guard($pkg): ${screen.length} letras, blockapp=$mentionsBlockApp, trava=$shouldLock")
+        if (shouldLock) openLock(pkg)
     }
 
     private fun collectText(node: AccessibilityNodeInfo?, out: StringBuilder, budget: IntArray) {
@@ -167,24 +172,15 @@ class BlockerService : AccessibilityService() {
         const val SETTINGS_PACKAGE = "com.android.settings"
         const val DETAIL_PAGE_MAX_LETTERS = 800
 
-        // Frases que identificam a tela de apps administradores (pt e en, minúsculas).
-        val ADMIN_PAGE_PHRASES = listOf(
-            "apps administradores", "aplicativos administradores", "administradores do dispositivo",
-            "administrador do dispositivo", "app administrador", "device admin", "device administrator",
-        )
+        // Parte do nome técnico (não traduzido) das telas de administradores do dispositivo.
+        const val ADMIN_SCREEN_MARKER = "DeviceAdmin"
+
         val GUARDED_SYSTEM_PACKAGES = setOf(
-            "com.android.settings",
+            SETTINGS_PACKAGE,
             "com.google.android.packageinstaller",
             "com.android.packageinstaller",
         )
         val CHECK_DELAYS_MS = longArrayOf(250L, 900L)
         const val MAX_NODES = 600
-
-        // Em português e inglês, em minúsculas.
-        val DANGEROUS_KEYWORDS = listOf(
-            "desinstal", "forçar parada", "forçar a parada", "desativar", "desative",
-            "administrador", "acessibilidade", "limpar dados", "armazenamento",
-            "uninstall", "force stop", "deactivate", "device admin", "accessibility", "clear data",
-        )
     }
 }

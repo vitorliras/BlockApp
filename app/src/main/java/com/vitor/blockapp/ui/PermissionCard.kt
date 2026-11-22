@@ -23,7 +23,9 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import com.vitor.blockapp.R
 import androidx.compose.ui.unit.dp
 
 /** Cartão que guia o usuário a ativar as permissões que faltam. */
@@ -53,7 +55,7 @@ fun PermissionCard(
                 )
                 Spacer(Modifier.width(10.dp))
                 Text(
-                    text = "Ative a proteção",
+                    text = stringResource(R.string.perm_title),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface,
@@ -61,7 +63,7 @@ fun PermissionCard(
             }
             Spacer(Modifier.height(6.dp))
             Text(
-                text = "Sem estas permissões o BlockApp não consegue bloquear nada.",
+                text = stringResource(R.string.perm_subtitle),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -69,42 +71,40 @@ fun PermissionCard(
 
             Step(
                 number = "1",
-                title = "Acessibilidade",
-                detail = "Procure por BlockApp e ligue o serviço.",
+                title = stringResource(R.string.perm_a11y_title),
+                detail = stringResource(R.string.perm_a11y_detail),
                 done = accessibilityOn,
-                action = "Abrir",
+                action = stringResource(R.string.action_open),
                 onClick = onOpenAccessibility,
             )
             Spacer(Modifier.height(10.dp))
             Step(
                 number = "2",
-                title = "Exibir sobre outros apps",
-                detail = "Permita para o BlockApp.",
+                title = stringResource(R.string.perm_overlay_title),
+                detail = stringResource(R.string.perm_overlay_detail),
                 done = overlayOn,
-                action = "Abrir",
+                action = stringResource(R.string.action_open),
                 onClick = onOpenOverlay,
             )
             Spacer(Modifier.height(10.dp))
             Step(
                 number = "3",
-                title = "Proteção contra desinstalação",
-                detail = "Ative como administrador do dispositivo.",
+                title = stringResource(R.string.perm_admin_title),
+                detail = stringResource(R.string.perm_admin_detail),
                 done = adminOn,
-                action = "Ativar",
+                action = stringResource(R.string.action_activate),
                 onClick = onOpenAdmin,
             )
 
             if (!accessibilityOn) {
                 Spacer(Modifier.height(10.dp))
                 Text(
-                    text = "A opção de Acessibilidade está cinza ou pede aviso de segurança? " +
-                        "Abra as informações do app, toque nos três pontinhos (⋮) e escolha " +
-                        "\"Permitir configurações restritas\".",
+                    text = stringResource(R.string.perm_restricted_help),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 TextButton(onClick = onOpenAppDetails) {
-                    Text("Abrir informações do app")
+                    Text(stringResource(R.string.perm_open_app_info))
                 }
             }
         }
@@ -124,7 +124,7 @@ private fun Step(
         if (done) {
             Icon(
                 imageVector = Icons.Filled.CheckCircle,
-                contentDescription = "Ativado",
+                contentDescription = stringResource(R.string.status_enabled),
                 tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(28.dp),
             )
@@ -157,7 +157,7 @@ private fun Step(
                 color = MaterialTheme.colorScheme.onSurface,
             )
             Text(
-                text = if (done) "Ativado" else detail,
+                text = if (done) stringResource(R.string.status_enabled) else detail,
                 style = MaterialTheme.typography.bodySmall,
                 color = if (done) MaterialTheme.colorScheme.primary
                 else MaterialTheme.colorScheme.onSurfaceVariant,

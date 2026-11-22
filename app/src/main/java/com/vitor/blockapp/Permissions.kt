@@ -37,7 +37,7 @@ object Permissions {
         .putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, adminComponent(context))
         .putExtra(
             DevicePolicyManager.EXTRA_ADD_EXPLANATION,
-            "Impede que o BlockApp seja desinstalado sem desativar esta proteção antes.",
+            context.getString(R.string.admin_explanation),
         )
 
     fun accessibilitySettingsIntent() = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
